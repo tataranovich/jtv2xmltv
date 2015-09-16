@@ -3,7 +3,7 @@
 The FILETIME structure is a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601.
 
 ```
-typedef struct \_FILETIME { // ft
+typedef struct _FILETIME { // ft
   DWORD dwLowDateTime;
   DWORD dwHighDateTime;
 } FILETIME;
