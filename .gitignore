@@ -1,2 +1,4 @@
 syntax: glob
 .idea
+*.swp
+*.pyc
