@@ -4,8 +4,8 @@ JTV to XMLTV converter.
 
 # Usage
 
-List all channels program information
+Convert JTV program guide in zip format to xmltv file:
 
 ```
-python src/jtv.py examples/TelecomTVepg.zip
+python src/jtv2xmltv.py examples/TelecomTVepg.zip /tmp/tvguide.xml
 ```
