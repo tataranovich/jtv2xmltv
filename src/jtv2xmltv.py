@@ -79,12 +79,26 @@ def convert_jtv_to_xmltv(jtv_filename, xmltv_filename=None, epg_encoding="UTF-8"
                     else:
                         ET.SubElement(xmltv_programme, 'title').text = curr_title
                     i = i + 1
-    xmltv = ET.ElementTree(xmltv_tv)
-    xmltv.write(xmltv_filename, encoding=epg_encoding, xml_declaration=True)
+    if xmltv_filename is None or xmltv_filename == "-":
+        print ET.tostring(xmltv_tv, encoding=epg_encoding, method="xml")
+    else:
+        xmltv = ET.ElementTree(xmltv_tv)
+        xmltv.write(xmltv_filename, encoding=epg_encoding, xml_declaration=True)
     archive.close()
 
+def show_usage():
+    print "Usage: jtv2xmltv.py <inputfile> [outputfile]"
+
 if __name__ == "__main__":
-    jtv_filename = sys.argv[1]
-    xmltv_filename = sys.argv[2]
+    if len(sys.argv) > 1:
+        jtv_filename = sys.argv[1]
+    else:
+        print >> sys.stderr, 'Input file not specified'
+        show_usage()
+        sys.exit(1)
+    if len(sys.argv) > 2:
+        xmltv_filename = sys.argv[2]
+    else:
+        xmltv_filename = None
     convert_jtv_to_xmltv(jtv_filename, xmltv_filename, epg_timezone="+0300")
 
