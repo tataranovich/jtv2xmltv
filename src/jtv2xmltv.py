@@ -21,6 +21,7 @@ def parse_titles(data):
     while len(data) > 0:
         title_length = int(struct.unpack('<H', data[0:2])[0])
         data = data[2:]
+        # TODO: epg titles encoding could be not cp1251
         title = data[0:title_length].decode('cp1251')
         data = data[title_length:]
         titles.append(title)
@@ -86,10 +87,12 @@ def convert_jtv_to_xmltv(jtv_filename, xmltv_filename=None, epg_encoding="UTF-8"
         xmltv.write(xmltv_filename, encoding=epg_encoding, xml_declaration=True)
     archive.close()
 
+
 def show_usage():
     print "Usage: jtv2xmltv.py <inputfile> [outputfile]"
 
-if __name__ == "__main__":
+
+def main():
     if len(sys.argv) > 1:
         jtv_filename = sys.argv[1]
     else:
@@ -102,3 +105,6 @@ if __name__ == "__main__":
         xmltv_filename = None
     convert_jtv_to_xmltv(jtv_filename, xmltv_filename, epg_timezone="+0300")
 
+
+if __name__ == "__main__":
+    main()
