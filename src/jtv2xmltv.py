@@ -7,6 +7,8 @@ import zipfile
 import struct
 import filetimes
 import xml.etree.ElementTree as ET
+import argparse
+import datetime
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -28,6 +30,12 @@ def parse_titles(data):
     return titles
 
 
+def filetime_to_datetime (time):
+    filetime = struct.unpack("<Q", time)
+    timestamp = filetime[0]/10
+    return datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=timestamp);
+
+
 def parse_schedule(data):
     schedules = []
     records_num = struct.unpack('<H', data[0:2])[0]
@@ -37,7 +45,7 @@ def parse_schedule(data):
         i = i + 1
         record = data[0:12]
         data = data[12:]
-        schedules.append(filetimes.filetime_to_dt(struct.unpack('<Q', record[2:-2])[0]))
+        schedules.append(filetime_to_datetime(record[2:-2]))
     return schedules
 
 
@@ -88,22 +96,21 @@ def convert_jtv_to_xmltv(jtv_filename, xmltv_filename=None, epg_encoding="UTF-8"
     archive.close()
 
 
-def show_usage():
-    print "Usage: jtv2xmltv.py <inputfile> [outputfile]"
-
-
 def main():
-    if len(sys.argv) > 1:
-        jtv_filename = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--inputfile', required = True)
+    parser.add_argument('-o', '--outputfile', default='-')
+    parser.add_argument('-t', '--timezone')
+    args = parser.parse_args()
+    jtv_filename = args.inputfile
+    xmltv_filename = args.outputfile
+    if args.timezone is None:
+        tz_format = 'UTC'
+    elif args.timezone[0]=='-' or args.timezone[0]=='+':
+        tz_format = str(args.timezone)
     else:
-        print >> sys.stderr, 'Input file not specified'
-        show_usage()
-        sys.exit(1)
-    if len(sys.argv) > 2:
-        xmltv_filename = sys.argv[2]
-    else:
-        xmltv_filename = None
-    convert_jtv_to_xmltv(jtv_filename, xmltv_filename, epg_timezone="+0300")
+        tz_format = '+' + str(args.timezone)
+    convert_jtv_to_xmltv(jtv_filename, xmltv_filename, epg_timezone=tz_format)
 
 
 if __name__ == "__main__":
