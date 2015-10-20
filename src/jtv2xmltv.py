@@ -5,7 +5,6 @@
 import sys
 import zipfile
 import struct
-import filetimes
 import xml.etree.ElementTree as ET
 import argparse
 import datetime
@@ -30,10 +29,10 @@ def parse_titles(data):
     return titles
 
 
-def filetime_to_datetime (time):
-    filetime = struct.unpack("<Q", time)
-    timestamp = filetime[0]/10
-    return datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=timestamp);
+def filetime_to_datetime(time):
+    filetime = struct.unpack("<Q", time)[0]
+    timestamp = filetime/10
+    return datetime.datetime(1601, 1, 1) + datetime.timedelta(microseconds=timestamp)
 
 
 def parse_schedule(data):
@@ -82,7 +81,10 @@ def convert_jtv_to_xmltv(jtv_filename, xmltv_filename=None, epg_encoding="UTF-8"
                         time_format = '%Y%m%d%H%M%S ' + epg_timezone
                     else:
                         time_format = '%Y%m%d%H%M%S'
-                    xmltv_programme = ET.SubElement(xmltv_tv, 'programme', start=channel_schedules[i].strftime(time_format), stop=channel_schedules[i+1].strftime(time_format), channel = str(channel_id))
+                    xmltv_programme = ET.SubElement(xmltv_tv, 'programme',
+                                                    start=channel_schedules[i].strftime(time_format),
+                                                    stop=channel_schedules[i+1].strftime(time_format),
+                                                    channel=str(channel_id))
                     if epg_lang is not None:
                         ET.SubElement(xmltv_programme, 'title', lang=str(epg_lang)).text = curr_title
                     else:
@@ -98,7 +100,7 @@ def convert_jtv_to_xmltv(jtv_filename, xmltv_filename=None, epg_encoding="UTF-8"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', required = True)
+    parser.add_argument('-i', '--inputfile', required=True)
     parser.add_argument('-o', '--outputfile', default='-')
     parser.add_argument('-t', '--timezone')
     args = parser.parse_args()
@@ -106,7 +108,7 @@ def main():
     xmltv_filename = args.outputfile
     if args.timezone is None:
         tz_format = 'UTC'
-    elif args.timezone[0]=='-' or args.timezone[0]=='+':
+    elif args.timezone[0] == '-' or args.timezone[0] == '+':
         tz_format = str(args.timezone)
     else:
         tz_format = '+' + str(args.timezone)
