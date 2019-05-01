@@ -1,4 +1,11 @@
 syntax: glob
-.idea
+/.idea
+/venv
+/.tox
+
+*.egg-info
+/build
+/dist
+
 *.swp
 *.pyc
