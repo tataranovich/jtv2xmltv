@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE = 1
+export PYBUILD_BEFORE_TEST=cp -r {dir}/tests {build_dir}
+export PYBUILD_AFTER_TEST=rm -rf {build_dir}/tests
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_python3:
+	dh_python3 --shebang=/usr/bin/python3
+
+override_dh_auto_test:
+	dh_auto_test -- --test-pytest
+

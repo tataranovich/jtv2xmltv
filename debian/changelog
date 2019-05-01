@@ -1,0 +1,12 @@
+jtv2xmltv (0.1.1-1) unstable; urgency=medium
+
+  * Cleanup packaging.
+
+ -- Andrey Tataranovich <tataranovich@gmail.com>  Wed, 01 May 2019 18:08:41 +0300
+
+jtv2xmltv (0.1.0-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Andrey Tataranovich <tataranovich@gmail.com>  Wed, 01 May 2019 16:05:27 +0300
+
