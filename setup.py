@@ -14,7 +14,7 @@ setup(
     author_email="tataranovich@gmail.com",
     description="JTV to XMLTV converter",
     long_description="JTV to XMLTV converter",
-    license="GPL-3",
+    license="MIT",
     keywords="epg xmltv jtv",
     url="https://github.com/tataranovich/jtv2xmltv/",
 )
