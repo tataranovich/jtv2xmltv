@@ -8,8 +8,13 @@ def test_correct_jtv_header():
     assert parse_titles(data) == []
 
 
-def test_incorrect_jtv_header():
+def test_alternative_jtv_header():
     data = b'JTV 3.x TV Program Data\xA0\xA0\xA0'
+    assert parse_titles(data) == []
+
+
+def test_incorrect_jtv_header():
+    data = b'JTV 3.x TV Program Data\xFF\xFF\xFF'
     with pytest.raises(Exception):
         parse_titles(data)
 

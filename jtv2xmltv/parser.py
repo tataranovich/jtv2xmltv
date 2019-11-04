@@ -2,17 +2,16 @@ import struct
 from jtv2xmltv.utils import filetime_to_datetime
 
 
-def parse_titles(data):
-    jtv_header = b"JTV 3.x TV Program Data\x0a\x0a\x0a"
-    if data[0:26] != jtv_header:
+def parse_titles(data, encoding="cp1251"):
+    jtv_headers = [b"JTV 3.x TV Program Data\x0a\x0a\x0a", b"JTV 3.x TV Program Data\xa0\xa0\xa0"]
+    if data[0:26] not in jtv_headers:
         raise Exception('Invalid JTV format')
     data = data[26:]
     titles = []
     while data:
         title_length = int(struct.unpack('<H', data[0:2])[0])
         data = data[2:]
-        # TODO: epg titles encoding could be not cp1251
-        title = data[0:title_length].decode('cp1251')
+        title = data[0:title_length].decode(encoding)
         data = data[title_length:]
         titles.append(title)
     return titles
