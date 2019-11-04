@@ -1,3 +1,10 @@
+jtv2xmltv (0.2.0-1) unstable; urgency=medium
+
+  * Handle broken JTV header.
+  * New option to specify EPG titles encoding (default cp1251).
+
+ -- Andrey Tataranovich <tataranovich@gmail.com>  Mon, 04 Nov 2019 22:00:32 +0300
+
 jtv2xmltv (0.1.1-1) unstable; urgency=medium
 
   * Cleanup packaging.
