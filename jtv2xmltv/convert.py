@@ -1,3 +1,4 @@
+from __future__ import print_function
 from xml.etree import ElementTree
 import zipfile
 import sys
@@ -28,16 +29,16 @@ def convert_jtv_to_xmltv(jtv_filename, jtv_encoding="cp1251", xmltv_encoding="ut
                 titles_filename = filename
                 titles = archive.read(titles_filename)
                 channel_titles = parse_titles(titles, encoding=jtv_encoding)
-            except Exception:
-                print("Failed to process titles in {}".format(titles_filename))
+            except Exception as e:
+                print("Failed to process titles in {}: {}".format(titles_filename, str(e)), file=sys.stderr)
                 continue
 
             try:
                 schedules_filename = filename[0:-4] + ".ndx"
                 schedules = archive.read(schedules_filename)
                 channel_schedules = parse_schedule(schedules)
-            except Exception:
-                print("Failed to process schedule in {}".format(schedules_filename))
+            except Exception as e:
+                print("Failed to process schedule in {}: {}".format(schedules_filename, str(e)), file=sys.stderr)
                 continue
 
             i = 0
