@@ -16,16 +16,18 @@ def main():
     parser.add_argument('-i', '--inputfile', required=True)
     parser.add_argument('-o', '--outputfile', default='-')
     parser.add_argument('-t', '--timezone')
+    parser.add_argument('-e', '--encoding', default='cp1251')
     args = parser.parse_args()
     jtv_filename = args.inputfile
     xmltv_filename = args.outputfile
+    jtv_encoding = args.encoding
     if args.timezone is None:
         tz_format = 'UTC'
     elif args.timezone[0] == '-' or args.timezone[0] == '+':
         tz_format = str(args.timezone)
     else:
         tz_format = '+' + str(args.timezone)
-    xmltv_content = convert_jtv_to_xmltv(jtv_filename, epg_timezone=tz_format)
+    xmltv_content = convert_jtv_to_xmltv(jtv_filename, jtv_encoding=jtv_encoding, xmltv_timezone=tz_format)
     if xmltv_filename is None or xmltv_filename == "-":
         print(xmltv_content)
     else:
