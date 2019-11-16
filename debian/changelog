@@ -1,12 +1,17 @@
 jtv2xmltv (0.2.1-1) unstable; urgency=medium
 
-  * Handle broken JTV header.
-  * Support alternative EPG titles encoding.
   * Fixed Debian package dependencies.
   * Added Debian copyright file.
   * Added man page for jtv2xmltv.
 
  -- Andrey Tataranovich <tataranovich@gmail.com>  Sat, 16 Nov 2019 10:17:53 +0300
+
+jtv2xmltv (0.2.0-1) unstable; urgency=medium
+
+  * Handle broken JTV header.
+  * New option to specify EPG titles encoding (default cp1251).
+
+ -- Andrey Tataranovich <tataranovich@gmail.com>  Mon, 04 Nov 2019 22:00:32 +0300
 
 jtv2xmltv (0.1.1-1) unstable; urgency=medium
 
