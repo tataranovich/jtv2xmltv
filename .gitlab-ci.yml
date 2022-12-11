@@ -1,0 +1,122 @@
+stages:
+  - test
+  - build
+  - deploy
+
+default:
+  image: python:3.9-alpine
+  before_script: &default-before-script
+    - apk update
+    - apk add bash ca-certificates curl libxml2-utils
+
+.tox-default:
+  before_script:
+    - *default-before-script
+    - pip --cache-dir .pip-cache install -r requirements-dev.txt
+  cache:
+    key: pip
+    paths:
+      - .pip-cache
+    when: always
+
+tox-lint:
+  extends: .tox-default
+  script:
+    - tox -e lint
+
+tox-py27:
+  extends: .tox-default
+  image: python:2.7-alpine
+  before_script:
+    - *default-before-script
+    - apk add gcc musl-dev
+    - pip --cache-dir .pip-cache install -r requirements-dev.txt
+  script:
+    - tox -e py27
+
+tox-py3x:
+  extends: .tox-default
+  script:
+    - tox -e py3x
+
+setuptools-sdist:
+  stage: build
+  before_script: []
+  script:
+    - python setup.py sdist
+    - python setup.py -V > dist/VERSION
+  artifacts:
+    paths:
+      - dist/jtv2xmltv-*.tar.gz
+      - dist/VERSION
+
+.debian-default:
+  stage: build
+  image: debian:11
+  before_script:
+    - tar -xf .apt-archives.tar -C / var/cache/apt/archives/ || true
+    - rm -fv /etc/apt/apt.conf.d/docker-clean
+  after_script:
+    - tar -cf .apt-archives.tar /var/cache/apt/archives/ || true
+  cache:
+    key: apt
+    paths:
+      - .apt-archives.tar
+    when: always
+
+debian-source:
+  extends: .debian-default
+  needs: ["setuptools-sdist"]
+  script:
+    - apt-get update
+    - apt-get install -y dpkg-dev devscripts
+    - mkdir pkg-root/
+    - VERSION=$(cat dist/VERSION)
+    - tar -xzf dist/jtv2xmltv-${VERSION}.tar.gz -C pkg-root/
+    - mv dist/jtv2xmltv-${VERSION}.tar.gz pkg-root/jtv2xmltv_${VERSION}.orig.tar.gz
+    - git checkout debian
+    - cp -a debian pkg-root/jtv2xmltv-${VERSION}/
+    - cd pkg-root/jtv2xmltv-${VERSION}/
+    - DEBFULLNAME='GitLab CI' DEBEMAIL=gitlab-ci@git.tataranovich.com dch -v ${VERSION}-1 'Auto CI build'
+    - dpkg-source -b .
+  artifacts:
+    paths:
+      - pkg-root/jtv2xmltv_${VERSION}*.*
+
+debian-binary:
+  extends: .debian-default
+  needs: ["setuptools-sdist", "debian-source"]
+  script:
+    - apt-get update
+    - apt-get install -y dpkg-dev build-essential debhelper dh-python python3-all python3-pytest python3-setuptools
+    - VERSION=$(cat dist/VERSION)
+    - cd pkg-root/
+    - dpkg-source -x jtv2xmltv_${VERSION}-1.dsc
+    - cd jtv2xmltv-${VERSION}/
+    - dpkg-buildpackage -us -uc
+  artifacts:
+    paths:
+      - pkg-root/jtv2xmltv_${VERSION}*.deb
+
+convert_teleguide:
+  stage: deploy
+  needs: ["setuptools-sdist"]
+  script:
+    - curl -Lo teleguide.zip http://www.teleguide.info/download/new3/jtv.zip
+    - curl -LO https://raw.githubusercontent.com/XMLTV/xmltv/master/xmltv.dtd
+    - pip install dist/jtv2xmltv-$(cat dist/VERSION).tar.gz
+    - jtv2xmltv -i teleguide.zip -o teleguide.xml -e CP1251
+    - xmllint --noout --dtdvalid xmltv.dtd teleguide.xml
+
+convert_iptvportal:
+  extends: .debian-default
+  stage: deploy
+  needs: ["debian-binary"]
+  script:
+    - apt-get update
+    - apt-get install -y curl ca-certificates python3 python3-pkg-resources libxml2-utils
+    - curl -Lo iptvportal.zip http://dkt.iptvportal.ru/jtv.zip
+    - curl -LO https://raw.githubusercontent.com/XMLTV/xmltv/master/xmltv.dtd
+    - dpkg -i pkg-root/jtv2xmltv_*.deb
+    - jtv2xmltv -i iptvportal.zip -o iptvportal.xml -e UTF-8
+    - xmllint --noout --dtdvalid xmltv.dtd iptvportal.xml

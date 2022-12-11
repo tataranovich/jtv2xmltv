@@ -28,10 +28,14 @@ def convert_jtv_to_xmltv(jtv_filename, jtv_encoding="cp1251", xmltv_encoding="ut
             schedules_data = archive.read(filename)
             titles_filename = filename[0:-4] + ".pdt"
             titles_data = archive.read(titles_filename)
-            if is_valid_jtv(titles_data):
-                channel_schedules = parse_schedule(schedules_data, titles_data, jtv_encoding)
-            else:
-                print("Invalid JTV data in {}".format(titles_filename), file=sys.stderr)
+            try:
+                if is_valid_jtv(titles_data):
+                    channel_schedules = parse_schedule(schedules_data, titles_data, jtv_encoding)
+                else:
+                    print("Invalid JTV data in {}".format(titles_filename), file=sys.stderr)
+            except Exception as e:
+                print("Failed to parse {}: {}".format(filename, str(e)), file=sys.stderr)
+                continue
 
             i = 0
             if xmltv_timezone != "UTC":

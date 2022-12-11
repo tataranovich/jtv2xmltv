@@ -9,10 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix incorrect program names when the same PDT record referenced multiple times in NDX file
+- Include missing JTV example artifact into source distribution for tests
+
+### Added
+
+- CI pipeline to build source distribution and debian binary package
 
 ### Changed
 
-- Change default Python 3.x version from 3.7 to 3.9
+- Change default Python 3.x version from 3.7 to 3.9 to run tests
 
 ## [v0.2.1] - 2019-11-05
 
