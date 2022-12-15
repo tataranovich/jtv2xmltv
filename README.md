@@ -17,7 +17,7 @@ python setup.py install
 Convert EPG in JTV format to XMLTV:
 
 ```
-jtv2xmltv [-t timezone] <-i input> [-o output]
+jtv2xmltv [-t timezone] [-e encoding] <-i input> [-o output]
 ```
 
 ## Examples
@@ -48,5 +48,4 @@ To validate XML output use following command
 jtv2xmltv -i examples/TelecomTVepg.zip -o output.xml
 wget https://raw.githubusercontent.com/XMLTV/xmltv/master/xmltv.dtd
 xmllint --noout --dtdvalid xmltv.dtd output.xml
-
 ```

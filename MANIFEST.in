@@ -1,1 +1,2 @@
-tests/data/sample.zip
+include tests/data/sample.zip
+include CHANGELOG.md
