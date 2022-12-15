@@ -1,3 +1,9 @@
+jtv2xmltv (0.2.2-1) unstable; urgency=medium
+
+  * Release 0.2.2.
+
+ -- Andrey Tataranovich <tataranovich@gmail.com>  Thu, 15 Dec 2022 20:59:35 +0300
+
 jtv2xmltv (0.2.1-1) unstable; urgency=medium
 
   * Fixed Debian package dependencies.
